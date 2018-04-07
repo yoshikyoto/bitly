@@ -3,12 +3,13 @@ import requests
 import urllib.parse
 import json
 import logging
+import config
 
 class BitlyApi():
     """bitly API にリクエストを送るクラス
 
     https://dev.bitly.com/get_started.html"""
-    access_token = ""
+    access_token = config.ACCESS_TOKEN
     base_url = "https://api-ssl.bitly.com"
 
     def get_link_lookup(self, long_url):
