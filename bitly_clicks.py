@@ -2,7 +2,6 @@ import sys
 import requests
 import urllib.parse
 import json
-import logging
 import config
 
 class BitlyApi():
@@ -37,18 +36,33 @@ class BitlyApi():
             params=params)
         return response.json()
 
+    def get_link_encoders_count(self, link):
+        path = "/v3/link/encoders_count"
+        params = {
+            "link": link,
+            "access_token": self.access_token,
+        }
+        response = requests.get(
+            self.base_url + path,
+            params=params)
+        return response.json()
+
 
 if __name__ == "__main__":
+    # loggingの設定をすることでrequestsの内容が見られる
+    # import logging
     # logging.basicConfig(level=logging.DEBUG)
     long_url = sys.argv[1];
-    # print("check url: " + long_url)
     api = BitlyApi()
-    # print("link lookup")
-    result = api.get_link_lookup(long_url)
+    lookup_result = api.get_link_lookup(long_url)
     # print(result)
-    short_link = result["data"]["link_lookup"][0]["aggregate_link"]
-    # print("short link: " + short_link)
-    result = api.get_link_clicks(short_link)
+    short_link = lookup_result["data"]["link_lookup"][0]["aggregate_link"]
+    clicks_result = api.get_link_clicks(short_link)
     # print(result)
-    link_clicks = result["data"]["link_clicks"]
-    print("Link clicks: " + str(link_clicks))
+    link_clicks = clicks_result["data"]["link_clicks"]
+    encode_count_result = api.get_link_encoders_count(short_link)
+    # print(encode_count_result)
+    encode_count = encode_count_result["data"]["count"]
+    print("URL: " + long_url)
+    print("Clicks: " + str(link_clicks))
+    print("Encode: " + str(encode_count))
